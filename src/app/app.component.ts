@@ -91,12 +91,12 @@ export class AppComponent {
       ]
 
       this.rowData = [
-        {'Cost Value Issue Funded SD': -8317000.000000004
-       ,'Dirty Market Value Issue Funded': -8387092.462600004
-       ,'Dirty Market Value Issue Funded SD': -8387092.462600004
-       ,'Market Value Issue Funded': -8317000.000000004
-       ,'Market Value Issue Funded SD': -8317000.000000004
-       ,'Maturity Date': "23 Jun 2023"}
+        {'Cost Value Issue Funded SD': 2341.000000004
+       ,'Dirty Market Value Issue Funded': 1238387092.462600004
+       ,'Dirty Market Value Issue Funded SD': -32423.462600004
+       ,'Market Value Issue Funded': -876122.000000004
+       ,'Market Value Issue Funded SD': 67.000000004
+       ,'Maturity Date': "23 Nov 2013"}
       ]
 
     }
