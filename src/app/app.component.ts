@@ -108,10 +108,13 @@ export class AppComponent implements OnInit{
     this.gridOptions?.api?.destroy();
     this.clicked = false;
 
+    this.loading = true;
+
     setTimeout(()=>{
       this.choice = choice;
       this.clicked = true;
-    },3000)
+      this.loading = false;
+    },1500)
   }
 
   onGridReady(params: GridReadyEvent){
@@ -143,7 +146,17 @@ export class AppComponent implements OnInit{
           Columns: this.columnDefs.map(x => x.field ?? ''),
           Name: 'Basic Dynamic Layout'
         }
-        adaptableApi.layoutApi.createAndSetLayout(layout);
+
+        // WRONG
+        // layoutApi.createAndSetLayout(layoutToCreate) is NOT the right method as it will always try to (re)create a layout with the same name
+        // when failing to do so, it will stop to set the nwe layout all together
+
+        // FIX
+        // layoutApi.saveLayout() will create a new Layout or update an existing one
+        // Layout is identified by the Name property or by the internal Uuid property (once it's saved in Adaptable State)
+        adaptableApi.layoutApi.saveLayout(layout);
+        // set the layout to be the one we just created/updated
+        adaptableApi.layoutApi.setLayout(layout.Name)
       }
     )
   }
