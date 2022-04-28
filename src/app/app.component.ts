@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { AdaptableApi, AdaptableOptions, AdaptableToolPanelAgGridComponent, Layout } from '@adaptabletools/adaptable-angular-aggrid';
 import { ClientSideRowModelModule, ColDef, GridOptions, GridReadyEvent, Module, ValueFormatterParams } from '@ag-grid-community/all-modules';
 import { RowGroupingModule, SetFilterModule, ColumnsToolPanelModule, MenuModule, ExcelExportModule } from '@ag-grid-enterprise/all-modules';
@@ -6,9 +6,9 @@ import { RowGroupingModule, SetFilterModule, ColumnsToolPanelModule, MenuModule,
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   title = 'DemoAdapatableApp';
   fetchedData!: any[]
   rowData: any[] = [];
@@ -21,6 +21,8 @@ export class AppComponent {
 
   clicked: boolean = false;
   choice!: number;
+
+  loading = false;
 
   ngOnInit(){
     this.adaptableOptions = {
@@ -39,7 +41,7 @@ export class AppComponent {
       predefinedConfig: {
         Dashboard: {
           ModuleButtons: ['Export', 'Layout','ConditionalStyle'],
-          IsCollapsed: true,
+          IsCollapsed: false,
           Tabs: [{
             Name:'Layout',
             Toolbars: ['Layout']
@@ -48,7 +50,7 @@ export class AppComponent {
         }
       }
     }
-    
+
     this.defaultColDef = {
       resizable: true,
       enableValue: true,
@@ -74,9 +76,9 @@ export class AppComponent {
         {field: 'AsofDate', tooltipField: 'AsofDate'}
         ,{field: 'PB Name', tooltipField: 'PB Name'}
         ,{field: 'Map Name', tooltipField: 'Map Name'}
-        ,{field: 'Account Description', tooltipField: 'Account Description'}    
-        ]   
-        
+        ,{field: 'Account Description', tooltipField: 'Account Description'}
+        ]
+
       this.rowData = [
         {'AsofDate': '11/23/2021 12:00:00 AM', 'PB Name': 'BNP', 'Map Name': 'XYZ', 'Account': 8736423, 'Account Description': 'XXXXXXXX'},{'AsofDate': '11/29/2021 12:00:00 AM', 'PB Name': 'BNP', 'Map Name': 'ABC', 'Account': 87231, 'Account Description': 'XXXXXXXX'}]
     }
@@ -104,11 +106,15 @@ export class AppComponent {
 
   onClick(choice: number){
     this.gridOptions?.api?.destroy();
-    this.clicked = false
+    this.clicked = false;
+
+    this.loading = true;
+
     setTimeout(()=>{
       this.choice = choice;
-      this.clicked = true;  
-    },3000)
+      this.clicked = true;
+      this.loading = false;
+    },1500)
   }
 
   onGridReady(params: GridReadyEvent){
@@ -140,7 +146,17 @@ export class AppComponent {
           Columns: this.columnDefs.map(x => x.field ?? ''),
           Name: 'Basic Dynamic Layout'
         }
-        adaptableApi.layoutApi.createAndSetLayout(layout);
+
+        // WRONG
+        // layoutApi.createAndSetLayout(layoutToCreate) is NOT the right method as it will always try to (re)create a layout with the same name
+        // when failing to do so, it will stop to set the nwe layout all together
+
+        // FIX
+        // layoutApi.saveLayout() will create a new Layout or update an existing one
+        // Layout is identified by the Name property or by the internal Uuid property (once it's saved in Adaptable State)
+        adaptableApi.layoutApi.saveLayout(layout);
+        // set the layout to be the one we just created/updated
+        adaptableApi.layoutApi.setLayout(layout.Name)
       }
     )
   }

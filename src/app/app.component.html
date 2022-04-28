@@ -1,7 +1,7 @@
 
 <button type="button" (click)="onClick(1)"> Choice 1</button>
 <button type="button" (click)="onClick(2)"> Choice 2</button>
-
+<span>Current choice: {{choice ?? 'None'}}</span>
 <div class="content">
     <ng-container *ngIf="clicked">
         <ag-grid-angular style="height: 70vh;"
@@ -17,7 +17,11 @@
         >
         </ag-grid-angular>
     </ng-container>
-    
+
+  <p *ngIf="loading" class="no-content">
+    Loading...
+  </p>
+
     <p *ngIf="rowData?.length === 0" class="no-content">
         No detailed view
     </p>

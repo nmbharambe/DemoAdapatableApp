@@ -11,7 +11,8 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
-    AdaptableAngularAgGridModule, 
+    AdaptableAngularAgGridModule,
+    AgGridModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
